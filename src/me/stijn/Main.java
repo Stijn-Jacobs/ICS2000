@@ -12,20 +12,39 @@ public class Main {
     public static void main(String[] args){
 
         //printDevices();
-        //generateMessage();
+        //generateOnMessage();
+        //generateDimMessage(-1L, 15);
     }
 
     /**
      *  Generate a command to send to the api, to for example turn a switch or light on.
      */
-    private static void generateMessage(){
+    private static void generateOnMessage(Long entitiyId){
         Message m = new Message();
         m.setFrameNumber(1);
         m.setMessageType(128); //128 = CONTROL_ENTITY
         m.setMacAddress(Bytes.macAddressToBytes(MAC));
         m.setMagicNumber();
-        m.setEntityId(-1L); //change to id of item to switch on / off
-        m.setData("{\"module\":{\"id\":<id>,\"function\":0,\"value\":1}}"); //value: 1 = on / 2 = off, also change the id
+        m.setEntityId(entitiyId); //change to id of item to switch on / off
+        m.setData("{\"module\":{\"id\":" + entitiyId + ",\"function\":0,\"value\":1}}"); //value: 1 = on / 2 = off, also change the id
+        m.setVersion();
+
+        System.out.println(Bytes.bytesToHexString(m.toBytes()));
+    }
+
+    /**
+     * Generate dim command, WARNING: DIM LEVEL NEEDS TO BE BETWEEN 0 AND 15
+     * @param entitiyId
+     * @param level
+     */
+    private static void generateDimMessage(Long entitiyId, Integer level){
+        Message m = new Message();
+        m.setFrameNumber(1);
+        m.setMessageType(128); //128 = CONTROL_ENTITY
+        m.setMacAddress(Bytes.macAddressToBytes(MAC));
+        m.setMagicNumber();
+        m.setEntityId(entitiyId); //change to id of item to switch on / off
+        m.setData("{\"module\":{\"id\":" + entitiyId + ",\"function\":1,\"value\":" + level + "}}"); //level needs to be 1 / 15
         m.setVersion();
 
         System.out.println(Bytes.bytesToHexString(m.toBytes()));
